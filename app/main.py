@@ -20,6 +20,8 @@ app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 templates = Jinja2Templates(directory="app/templates")
 
+from app.config import APP_VERSION
+templates.env.globals["APP_VERSION"] = APP_VERSION
 
 def get_db():
     db = SessionLocal()
@@ -123,3 +125,5 @@ def delete_ad(
 @app.get("/favicon.ico")
 async def favicon():
     return FileResponse(str(static_dir / "favicon.ico"), media_type="image/x-icon")
+
+
