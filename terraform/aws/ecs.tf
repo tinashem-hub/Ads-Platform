@@ -1,3 +1,8 @@
+resource "aws_cloudwatch_log_group" "ecs" {
+  name              = "/ecs/ads-platform"
+  retention_in_days = 7
+}
+
 resource "aws_ecs_cluster" "main" {
   name = "ads-platform-cluster"
 }
@@ -15,9 +20,18 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = jsonencode([
     {
       name  = "ads-platform"
-      image = "276663280751.dkr.ecr.eu-north-1.amazonaws.com/ads-platform:latest"
+      image = "276663280751.dkr.ecr.eu-north-1.amazonaws.com/ads-platform:772315ff7b48666f4c939810fc881a58ea6dd941"
 
       essential = true
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+          "awslogs-region"        = "e"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
 
       portMappings = [
         {
